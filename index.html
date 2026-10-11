@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHARE & CARE — Misi Berbagi Kebaikan</title>
+    <!-- Tailwind CSS for rapid modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka for playful headers, Poppins for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            turquoise: '#0ea5e9',
+                            sky: '#38bdf8',
+                            coral: '#f97316',
+                            yellow: '#facc15',
+                            lavender: '#c084fc',
+                            mint: '#34d399',
+                            cream: '#fefce8',
+                            emerald: '#059669',
+                            dark: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; user-select: none; }
+        h1, h2, h3, h4, .font-display { font-family: 'Fredoka', cursive, sans-serif; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(250, 204, 21, 0.6); }
+            50% { box-shadow: 0 0 35px rgba(250, 204, 21, 0.95); }
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 2s infinite; }
+        .animate-wiggle { animation: wiggle 0.5s ease-in-out infinite; }
+        .animate-bounce-subtle { animation: bounce-subtle 2s ease-in-out infinite; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-950 via-purple-900 to-sky-950 h-full flex items-center justify-center p-2 sm:p-4 overflow-x-hidden">
+
+    <div id="game-container" class="w-full max-w-6xl aspect-[16/9] max-h-[92vh] bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col relative border-4 border-white/20">
+        
+        <!-- Top Status Bar (Visible in gameplay) -->
+        <header id="top-nav" class="hidden bg-slate-900/95 backdrop-blur-md px-6 py-3 border-b border-white/10 items-center justify-between z-30">
+            <div class="flex items-center gap-3">
+                <button onclick="switchScreen(0)" class="bg-slate-800 hover:bg-slate-700 text-white px-3.5 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition border border-white/10 shadow">
+                    <i class="fa-solid fa-house"></i> Beranda
+                </button>
+                <button onclick="switchScreen(9)" class="bg-brand-turquoise/20 hover:bg-brand-turquoise/40 text-brand-sky px-3.5 py-1.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition border border-brand-turquoise/30 shadow">
+                    <i class="fa-solid fa-map"></i> Peta Kota
+                </button>
+            </div>
+            
+            <div class="flex items-center gap-4 sm:gap-6">
+                <!-- Heart Coins -->
+                <div class="flex items-center gap-2 bg-slate-800/90 px-3.5 py-1.5 rounded-full border border-pink-500/30 text-pink-400 font-bold text-sm shadow-inner">
+                    <i class="fa-solid fa-heart animate-pulse"></i>
+                    <span id="stat-coins">0</span>
+                </div>
+                <!-- Stars -->
+                <div class="flex items-center gap-2 bg-slate-800/90 px-3.5 py-1.5 rounded-full border border-yellow-500/30 text-brand-yellow font-bold text-sm shadow-inner">
+                    <i class="fa-solid fa-star"></i>
+                    <span id="stat-stars">0</span>
+                </div>
+                <!-- Care Energy / Progress -->
+                <div class="flex items-center gap-2 bg-slate-800/90 px-3.5 py-1.5 rounded-full border border-emerald-500/30 text-brand-mint font-bold text-sm shadow-inner">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span id="stat-energy">0/6 Misi</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="toggleAudio()" id="audio-toggle-btn" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center transition border border-white/10" title="Pengatur Suara">
+                    <i class="fa-solid fa-volume-high" id="audio-icon"></i>
+                </button>
+                <button onclick="openHelpModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center transition border border-white/10" title="Bantuan">
+                    <i class="fa-solid fa-question"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Screen Viewport (Dynamically Rendered Screens 1 to 12) -->
+        <main id="screen-viewport" class="flex-1 relative overflow-y-auto overflow-x-hidden bg-slate-950 flex flex-col">
+            <!-- Rendered via JavaScript -->
+        </main>
+
+        <!-- Toast Notification Container -->
+        <div id="toast-container" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 transform translate-y-16 opacity-0">
+            <div class="bg-slate-900/95 border-2 border-brand-yellow px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 text-white backdrop-blur-md">
+                <div id="toast-icon" class="text-brand-yellow text-2xl"><i class="fa-solid fa-award"></i></div>
+                <div>
+                    <h4 id="toast-title" class="font-display font-bold text-brand-yellow text-sm">Pencapaian Baru!</h4>
+                    <p id="toast-desc" class="text-xs text-slate-300">Kamu mendapat 50 Heart Coins!</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Help / Settings Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-white/20 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-white relative shadow-2xl">
+            <button onclick="closeHelpModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="flex items-center gap-4 mb-5">
+                <div class="w-14 h-14 rounded-2xl bg-brand-coral/20 border border-brand-coral flex items-center justify-center text-brand-coral text-2xl font-bold">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h3 class="font-display text-xl sm:text-2xl text-brand-sky">Bantuan & Panduan Bimo</h3>
+                    <p class="text-xs text-slate-400">Halo! Aku Bimo, robot pelindung kebaikan.</p>
+                </div>
+            </div>
+            <div class="space-y-3 text-sm text-slate-300 mb-6 max-h-[50vh] overflow-y-auto pr-2">
+                <div class="bg-slate-800/60 p-4 rounded-2xl border border-white/5">
+                    <strong class="text-white block mb-1"><i class="fa-solid fa-heart text-pink-400 mr-2"></i>Heart Coins & Bintang</strong>
+                    Kumpulkan koin dan bintang dengan menyelesaikan tantangan di setiap sudut Kota Pelangi. Semua tentang belajar dengan gembira!
+                </div>
+                <div class="bg-slate-800/60 p-4 rounded-2xl border border-white/5">
+                    <strong class="text-white block mb-1"><i class="fa-solid fa-map-location-dot text-brand-sky mr-2"></i>6 Misi Utama</strong>
+                    Jelajahi Perpustakaan, Gudang Donasi, Sekolah, Jembatan Pengetahuan, Pulau Asnaf, dan Balai Komunitas untuk menghidupkan kembali kota.
+                </div>
+                <div class="bg-slate-800/60 p-4 rounded-2xl border border-white/5">
+                    <strong class="text-white block mb-1"><i class="fa-solid fa-hands-holding-child text-brand-mint mr-2"></i>Sedekah & Zakat</strong>
+                    Pahami perbedaan sedekah sukarela dan aturan zakat serta 8 golongan penerima (asnaf) dengan penuh empati dan kebijaksanaan.
+                </div>
+            </div>
+            <button onclick="closeHelpModal()" class="w-full py-3.5 bg-gradient-to-r from-brand-coral to-amber-500 hover:from-brand-coral/90 hover:to-amber-500/90 text-white font-display font-bold rounded-2xl shadow-lg transition">
+                Mengerti, Lanjutkan Petualangan!
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Game Engine -->
+    <script>
+        // Game State Management
+        const state = {
+            currentScreen: 0,
+            coins: 100,
+            stars: 0,
+            badges: [],
+            completedMissions: [false, false, false, false, false, false],
+            soundEnabled: true,
+            playerName: "Pahlawan Kebaikan",
+            // Mission specific interactive states
+            m1BooksPlaced: 0,
+            m2SortedCount: 0,
+            m3Found: [false, false, false],
+            m4BridgesBuilt: 0,
+            m5Unlocked: [false, false, false, false, false, false, false, false],
+            m5SortedCorrect: 0,
+            m6Steps: 0
+        };
+
+        // Web Audio Synthesizer for Retro Game Sound Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'success') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'coin') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(987.77, now); // B5
+                osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(160, now + 0.1);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        }
+
+        function toggleAudio() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('audio-icon');
+            icon.className = state.soundEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark";
+            showToast(state.soundEnabled ? "Suara Diaktifkan" : "Suara Dinonaktifkan", "fa-volume-high", "Preferensi audio disimpan.");
+        }
+
+        function showToast(title, iconClass = "fa-award", desc = "Pencapaian berhasil disimpan!") {
+            const container = document.getElementById('toast-container');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-desc').innerText = desc;
+            document.getElementById('toast-icon').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+            
+            container.classList.remove('translate-y-16', 'opacity-0');
+            container.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                container.classList.remove('translate-y-0', 'opacity-100');
+                container.classList.add('translate-y-16', 'opacity-0');
+            }, 3200);
+        }
+
+        function updateHUD() {
+            document.getElementById('stat-coins').innerText = state.coins;
+            document.getElementById('stat-stars').innerText = state.stars;
+            const completedCount = state.completedMissions.filter(Boolean).length;
+            document.getElementById('stat-energy').innerText = `${completedCount}/6 Misi`;
+            
+            const topNav = document.getElementById('top-nav');
+            if (state.currentScreen === 0) {
+                topNav.classList.add('hidden');
+            } else {
+                topNav.classList.remove('hidden');
+                topNav.classList.add('flex');
+            }
+        }
+
+        function switchScreen(screenIndex) {
+            playSound('click');
+            state.currentScreen = screenIndex;
+            updateHUD();
+            renderScreen();
+        }
+
+        function openHelpModal() {
+            playSound('click');
+            document.getElementById('help-modal').classList.remove('hidden');
+        }
+
+        function closeHelpModal() {
+            playSound('click');
+            document.getElementById('help-modal').classList.add('hidden');
+        }
+
+        function finishMission(missionIndex) {
+            if (!state.completedMissions[missionIndex]) {
+                state.completedMissions[missionIndex] = true;
+                state.coins += 50;
+                state.stars += 1;
+                playSound('success');
+                showToast(`Misi ${missionIndex + 1} Selesai!`, "fa-star", "Kamu mendapat 50 Heart Coins & 1 Bintang!");
+            }
+            switchScreen(9); // Return to community map
+        }
+
+        function renderScreen() {
+            const viewport = document.getElementById('screen-viewport');
+            viewport.innerHTML = '';
+
+            switch(state.currentScreen) {
+                case 0: renderCoverScreen(viewport); break;
+                case 1: renderTutorialScreen(viewport); break;
+                case 2: renderTheoryScreen(viewport); break;
+                case 3: renderMission1Screen(viewport); break;
+                case 4: renderMission2Screen(viewport); break;
+                case 5: renderMission3Screen(viewport); break;
+                case 6: renderMission4Screen(viewport); break;
+                case 7: renderMission5Screen(viewport); break;
+                case 8: renderMission6Screen(viewport); break;
+                case 9: renderMapScreen(viewport); break;
+                case 10: renderFeedbackScreen(viewport); break;
+                case 11: renderRewardScreen(viewport); break;
+                default: renderCoverScreen(viewport);
+            }
+        }
+
+        // ==========================================
+        // SCREEN 0: COVER / MAIN MENU
+        // ==========================================
+        function renderCoverScreen(container) {
+            container.innerHTML = `
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-950 via-purple-900 to-sky-950 flex flex-col items-center justify-between p-6 sm:p-10 overflow-hidden">
+                    <div class="absolute -top-20 -left-20 w-96 h-96 bg-brand-turquoise/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="text-center z-10 mt-1">
+                        <div class="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md px-6 py-2 rounded-full border border-white/20 mb-3 animate-float shadow-lg">
+                            <span class="w-8 h-8 rounded-full bg-brand-coral flex items-center justify-center text-white text-sm font-bold shadow"><i class="fa-solid fa-robot"></i></span>
+                            <span class="text-brand-yellow font-display font-bold tracking-wider text-sm sm:text-base">Misi Berbagi Kebaikan 🌟</span>
+                        </div>
+                        <h1 class="font-display text-4xl sm:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-sky via-brand-yellow to-pink-400 drop-shadow-md mb-1">
+                            SHARE & CARE
+                        </h1>
+                        <p class="text-lg sm:text-2xl font-display text-brand-cream/90 tracking-wide">Misi Berbagi Kebaikan</p>
+                        <p class="text-xs sm:text-sm text-brand-sky/80 italic mt-1">“Langkah Kecil, Dampak Besar!”</p>
+                    </div>
+
+                    <!-- Central Visual Art: City & Bimo Robot -->
+                    <div class="relative w-full max-w-2xl h-44 sm:h-56 my-2 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent rounded-3xl border border-white/10 backdrop-blur-sm flex items-end justify-around p-6 overflow-hidden shadow-2xl">
+                            <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                            <div class="flex flex-col items-center text-brand-turquoise z-10"><i class="fa-solid fa-school text-3xl sm:text-5xl mb-1 animate-float" style="animation-delay: 0.2s"></i><span class="text-[10px] text-slate-300">Sekolah</span></div>
+                            <div class="flex flex-col items-center text-brand-yellow z-10"><i class="fa-solid fa-book-open text-3xl sm:text-5xl mb-1 animate-float" style="animation-delay: 0.5s"></i><span class="text-[10px] text-slate-300">Perpus</span></div>
+                            <div class="flex flex-col items-center text-pink-400 z-25 transform -translate-y-3 animate-pulse-glow bg-slate-900/90 p-3.5 rounded-3xl border-2 border-brand-yellow shadow-2xl">
+                                <i class="fa-solid fa-robot text-4xl sm:text-5xl text-brand-yellow"></i>
+                                <span class="font-display font-bold text-[10px] text-white mt-1">BIMO BOT</span>
+                            </div>
+                            <div class="flex flex-col items-center text-brand-mint z-10"><i class="fa-solid fa-tree text-3xl sm:text-5xl mb-1 animate-float" style="animation-delay: 0.8s"></i><span class="text-[10px] text-slate-300">Taman</span></div>
+                            <div class="flex flex-col items-center text-brand-lavender z-10"><i class="fa-solid fa-hands-holding-child text-3xl sm:text-5xl mb-1 animate-float" style="animation-delay: 1.1s"></i><span class="text-[10px] text-slate-300">Komunitas</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center gap-3 z-10 w-full max-w-md">
+                        <button onclick="switchScreen(1)" class="w-full py-3.5 bg-gradient-to-r from-brand-coral to-amber-500 hover:from-brand-coral/90 text-white font-display font-bold text-lg rounded-2xl shadow-xl shadow-brand-coral/30 flex items-center justify-center gap-3 transform hover:scale-105 transition">
+                            <i class="fa-solid fa-play text-xl"></i> MULAI PETUALANGAN
+                        </button>
+                        <div class="flex gap-3 w-full">
+                            <button onclick="switchScreen(2)" class="flex-1 py-3 bg-slate-800/90 hover:bg-slate-700 text-brand-sky font-display font-semibold rounded-xl border border-brand-sky/30 flex items-center justify-center gap-2 transition text-sm">
+                                <i class="fa-solid fa-book-bookmark"></i> CARA BERMAIN
+                            </button>
+                            <button onclick="toggleAudio()" class="flex-1 py-3 bg-slate-800/90 hover:bg-slate-700 text-brand-yellow font-display font-semibold rounded-xl border border-brand-yellow/30 flex items-center justify-center gap-2 transition text-sm">
+                                <i class="fa-solid fa-volume-high"></i> AUDIO ON/OFF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // SCREEN 1: TUTORIAL INTERAKTIF
+        // ==========================================
+        function renderTutorialScreen(container) {
+            container.innerHTML = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 to-indigo-950 p-6 sm:p-10 flex flex-col justify-between text-white">
+                    <div class="max-w-3xl mx-auto w-full">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-14 h-14 rounded-2xl bg-brand-turquoise/20 border border-brand-turquoise flex items-center justify-center text-brand-turquoise text-2xl font-bold shadow-lg">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-display text-2xl sm:text-3xl text-brand-sky">Halo, Pahlawan Kebaikan!</h2>
+                                <p class="text-sm text-slate-300">Aku Bimo, robot kotak donasi yang akan mendampingimu menghidupkan Kota Pelangi.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-slate-800/80 p-5 rounded-2xl border border-white/10 flex flex-col items-center text-center">
+                                <div class="w-12 h-12 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-xl mb-3"><i class="fa-solid fa-heart"></i></div>
+                                <h4 class="font-display font-bold text-white mb-1">Heart Coins</h4>
+                                <p class="text-xs text-slate-300">Simbol apresiasi kebaikan dan semangat menolong sesama.</p>
+                            </div>
+                            <div class="bg-slate-800/80 p-5 rounded-2xl border border-white/10 flex flex-col items-center text-center">
+                                <div class="w-12 h-12 rounded-xl bg-yellow-500/20 text-brand-yellow flex items-center justify-center text-xl mb-3"><i class="fa-solid fa-star"></i></div>
+                                <h4 class="font-display font-bold text-white mb-1">Bintang Misi</h4>
+                                <p class="text-xs text-slate-300">Bukti keberhasilanmu menyelesaikan setiap tantangan di kota.</p>
+                            </div>
+                            <div class="bg-slate-800/80 p-5 rounded-2xl border border-white/10 flex flex-col items-center text-center">
+                                <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-brand-mint flex items-center justify-center text-xl mb-3"><i class="fa-solid fa-bolt"></i></div>
+                                <h4 class="font-display font-bold text-white mb-1">Energi Kepedulian</h4>
+                                <p class="text-xs text-slate-300">Kunci untuk membuka seluruh sudut kota dari sekolah hingga balai.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-brand-cream/10 border border-brand-yellow/30 p-4.5 rounded-2xl flex items-center gap-4">
+                            <i class="fa-solid fa-lightbulb text-brand-yellow text-3xl"></i>
+                            <div class="text-xs sm:text-sm text-brand-cream">
+                                <strong>Misi Utama:</strong> Selesaikan 6 misi interaktif yang berbeda untuk memulihkan warna dan keceriaan Kota Pelangi!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-3xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(0)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-arrow-left mr-2"></i> Kembali
+                        </button>
+                        <button onclick="switchScreen(2)" class="px-8 py-3 bg-gradient-to-r from-brand-coral to-amber-500 hover:from-brand-coral/90 text-white font-display font-bold rounded-xl shadow-lg transition">
+                            Lanjut: Kenali Berbagi <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // SCREEN 2: MINI MATERI "KENALI BERBAGI"
+        // ==========================================
+        function renderTheoryScreen(container) {
+            container.innerHTML = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 to-indigo-950 p-6 sm:p-10 flex flex-col justify-between text-white">
+                    <div class="max-w-3xl mx-auto w-full">
+                        <div class="text-center mb-6">
+                            <span class="bg-brand-turquoise/20 text-brand-sky px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-brand-turquoise/30">Materi PAI Interaktif</span>
+                            <h2 class="font-display text-3xl sm:text-4xl text-white mt-2">Makna Sedekah & Zakat Dasar</h2>
+                            <p class="text-sm text-slate-300">Mari pahami kebaikan dalam Islam dengan gembira dan bijaksana.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-slate-800/80 p-6 rounded-3xl border border-brand-sky/30 shadow-xl flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 rounded-xl bg-brand-sky/20 text-brand-sky flex items-center justify-center text-xl"><i class="fa-solid fa-gift"></i></div>
+                                        <h3 class="font-display text-xl text-brand-sky">Apa itu Sedekah?</h3>
+                                    </div>
+                                    <p class="text-sm text-slate-300 leading-relaxed mb-4">
+                                        Sedekah adalah pemberian sukarela dari seseorang kepada orang lain atau untuk kepentingan umum, baik berupa harta, tenaga, senyuman, maupun kebaikan lainnya tanpa batasan jumlah.
+                                    </p>
+                                </div>
+                                <div class="bg-slate-900/60 p-3 rounded-2xl text-xs text-brand-cream border border-white/5 flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-check text-brand-mint"></i> Contoh: Meminjamkan alat tulis, menolong teman, tersenyum ramah.
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-800/80 p-6 rounded-3xl border border-brand-coral/30 shadow-xl flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 rounded-xl bg-brand-coral/20 text-brand-coral flex items-center justify-center text-xl"><i class="fa-solid fa-scale-balanced"></i></div>
+                                        <h3 class="font-display text-xl text-brand-coral">Apa itu Zakat?</h3>
+                                    </div>
+                                    <p class="text-sm text-slate-300 leading-relaxed mb-4">
+                                        Zakat adalah kewajiban mengeluarkan sebagian harta tertentu dengan syarat dan ketentuan tertentu (seperti mencapai nisab) untuk diberikan kepada 8 golongan yang berhak (asnaf).
+                                    </p>
+                                </div>
+                                <div class="bg-slate-900/60 p-3 rounded-2xl text-xs text-brand-cream border border-white/5 flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-check text-brand-mint"></i> Contoh: Zakat fitrah di bulan Ramadan dan zakat mal.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-3xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(1)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-arrow-left mr-2"></i> Kembali
+                        </button>
+                        <button onclick="switchScreen(9)" class="px-8 py-3 bg-gradient-to-r from-brand-emerald to-teal-600 hover:from-brand-emerald/90 text-white font-display font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+                            Mulai Menjelajah Peta Kota <i class="fa-solid fa-map"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // MISSION 1: RESCUE THE BOOKS
+        // ==========================================
+        function renderMission1Screen(container) {
+            container.innerHTML = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 to-indigo-950 p-6 flex flex-col justify-between text-white">
+                    <div class="max-w-4xl mx-auto w-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-sky uppercase tracking-wider">Misi 1 dari 6 — Perpustakaan Kota</span>
+                                <h2 class="font-display text-2xl sm:text-3xl text-white">Rescue the Books 📚</h2>
+                            </div>
+                            <div class="bg-slate-800 px-4 py-2 rounded-2xl border border-white/10 text-brand-yellow font-display font-bold">
+                                Buku Tersusun: <span id="m1-count">${state.m1BooksPlaced}</span>/3
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-6">
+                            Perpustakaan komunitas sedang menata buku belajar. Pilih dan tempatkan 3 buku edukasi/PAI ke dalam rak dengan benar untuk membantu fasilitas belajar anak-anak!
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                            <!-- Items to Pick -->
+                            <div class="bg-slate-800/80 p-5 rounded-3xl border border-white/10">
+                                <h3 class="font-display text-sm text-slate-400 mb-3 uppercase tracking-wider">Pilih Benda Belajar Layak:</h3>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div onclick="selectM1Item('buku_pai', this)" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                        <i class="fa-solid fa-book-quran text-3xl text-brand-yellow mb-2 group-hover:scale-110 transition"></i>
+                                        <span class="text-xs font-semibold">Buku Cerita PAI</span>
+                                    </div>
+                                    <div onclick="selectM1Item('bola', this)" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                        <i class="fa-solid fa-futbol text-3xl text-brand-coral mb-2 group-hover:scale-110 transition"></i>
+                                        <span class="text-xs font-semibold">Bola Mainan</span>
+                                    </div>
+                                    <div onclick="selectM1Item('buku_cerita', this)" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                        <i class="fa-solid fa-book-open text-3xl text-brand-sky mb-2 group-hover:scale-110 transition"></i>
+                                        <span class="text-xs font-semibold">Buku Pengetahuan</span>
+                                    </div>
+                                    <div onclick="selectM1Item('sampah', this)" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                        <i class="fa-solid fa-trash text-3xl text-slate-500 mb-2 group-hover:scale-110 transition"></i>
+                                        <span class="text-xs font-semibold">Bungkus Plastik</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Target Shelf Dropzone -->
+                            <div class="bg-slate-800/80 p-6 rounded-3xl border border-white/10 flex flex-col items-center justify-center min-h-[220px]">
+                                <div class="w-16 h-16 rounded-2xl bg-brand-turquoise/20 text-brand-turquoise flex items-center justify-center text-3xl mb-4 animate-float">
+                                    <i class="fa-solid fa-book-bookmark"></i>
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-white mb-2">Rak Buku Perpustakaan</h3>
+                                <p id="m1-status-text" class="text-xs text-slate-400 text-center mb-4">Klik benda belajar yang tepat di sebelah kiri untuk menyusunnya ke rak.</p>
+                                <div class="flex gap-3">
+                                    <div class="w-12 h-16 rounded-xl bg-slate-900 border-2 border-dashed border-slate-700 flex items-center justify-center text-slate-600 slot-1"><i class="fa-solid fa-book"></i></div>
+                                    <div class="w-12 h-16 rounded-xl bg-slate-900 border-2 border-dashed border-slate-700 flex items-center justify-center text-slate-600 slot-2"><i class="fa-solid fa-book"></i></div>
+                                    <div class="w-12 h-16 rounded-xl bg-slate-900 border-2 border-dashed border-slate-700 flex items-center justify-center text-slate-600 slot-3"><i class="fa-solid fa-book"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-4xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(9)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-map mr-2"></i> Kembali ke Peta
+                        </button>
+                        <button id="m1-next-btn" onclick="finishMission(0)" disabled class="px-8 py-3 bg-slate-700 text-slate-400 font-display font-bold rounded-xl cursor-not-allowed transition">
+                            Selesaikan Misi <i class="fa-solid fa-check ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectM1Item(type, el) {
+            if (el.classList.contains('opacity-40')) return;
+            if (type === 'buku_pai' || type === 'buku_cerita') {
+                el.classList.add('opacity-40', 'pointer-events-none', 'border-brand-mint');
+                state.m1BooksPlaced++;
+                document.getElementById('m1-count').innerText = state.m1BooksPlaced;
+                playSound('coin');
+                
+                const slot = document.querySelector(`.slot-${state.m1BooksPlaced}`);
+                if (slot) {
+                    slot.classList.remove('border-dashed', 'border-slate-700', 'text-slate-600');
+                    slot.classList.add('border-brand-mint', 'text-brand-mint', 'bg-brand-mint/20');
+                }
+
+                if (state.m1BooksPlaced >= 3) {
+                    document.getElementById('m1-status-text').innerText = "Hebat! Rak buku perpustakaan telah tersusun rapi!";
+                    const nextBtn = document.getElementById('m1-next-btn');
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
+                    nextBtn.classList.add('bg-gradient-to-r', 'from-brand-emerald', 'to-teal-600', 'text-white', 'hover:opacity-90');
+                }
+            } else {
+                playSound('error');
+                showToast("Kurang Tepat", "fa-triangle-exclamation", "Pilih buku belajar yang layak untuk perpustakaan!");
+            }
+        }
+
+        // ==========================================
+        // MISSION 2: DONATION SORTER
+        // ==========================================
+        function renderMission2Screen(container) {
+            container.innerHTML = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 to-indigo-950 p-6 flex flex-col justify-between text-white">
+                    <div class="max-w-4xl mx-auto w-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-sky uppercase tracking-wider">Misi 2 dari 6 — Gudang Donasi Komunitas</span>
+                                <h2 class="font-display text-2xl sm:text-3xl text-white">Donation Sorter 🎁</h2>
+                            </div>
+                            <div class="bg-slate-800 px-4 py-2 rounded-2xl border border-white/10 text-brand-yellow font-display font-bold">
+                                Barang Terpilah: <span id="m2-count">${state.m2SortedCount}</span>/3
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-6">
+                            Barang yang didonasikan harus bersih, aman, dan layak digunakan. Klik barang layak lalu masukkan ke keranjang “Siap Dibagikan”.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-slate-800/80 p-5 rounded-3xl border border-white/10 md:col-span-2">
+                                <h3 class="font-display text-sm text-slate-400 mb-3 uppercase tracking-wider">Pilih Barang Layak Donasi:</h3>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    <div onclick="sortItem('layak', this)" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                        <i class="fa-solid fa-pencil text-3xl text-brand-yellow mb-2 group-hover:scale-110 transition"></i>
+                                        <span class="text-xs font-semibold">Kotak Pensil Baru</span>
+                                    </div>
+                                    <div onclick="sortItem('rusak', this)" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                        <i class="fa-solid fa-triangle-exclamation text-3xl text-red-400 mb-2 group-hover:scale-110 transition"></i>
+                                        <span class="text-xs font-semibold">Mainan Patah</span>
+                                    </div>
+                                    <div onclick="sortItem('layak', this)" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                        <i class="fa-solid fa-shirt text-3xl text-brand-sky mb-2 group-hover:scale-110 transition"></i>
+                                        <span class="text-xs font-semibold">Baju Bersih</span>
+                                    </div>
+                                    <div onclick="sortItem('sampah', this)" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                        <i class="fa-solid fa-trash text-3xl text-slate-500 mb-2 group-hover:scale-110 transition"></i>
+                                        <span class="text-xs font-semibold">Sampah Plastik</span>
+                                    </div>
+                                    <div onclick="sortItem('layak', this)" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                        <i class="fa-solid fa-book-open text-3xl text-brand-mint mb-2 group-hover:scale-110 transition"></i>
+                                        <span class="text-xs font-semibold">Buku Layak Baca</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-800/80 p-6 rounded-3xl border border-white/10 flex flex-col items-center justify-center text-center">
+                                <div class="w-16 h-16 rounded-2xl bg-brand-coral/20 text-brand-coral flex items-center justify-center text-3xl mb-4 animate-float">
+                                    <i class="fa-solid fa-box-archive"></i>
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-white mb-2">Keranjang Siap Dibagikan</h3>
+                                <p id="m2-status" class="text-xs text-slate-400 mb-4">Pilih 3 barang layak pakai.</p>
+                                <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-white/10">
+                                    <div id="m2-bar" class="bg-brand-coral h-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-4xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(9)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-map mr-2"></i> Kembali ke Peta
+                        </button>
+                        <button id="m2-next-btn" onclick="finishMission(1)" disabled class="px-8 py-3 bg-slate-700 text-slate-400 font-display font-bold rounded-xl cursor-not-allowed transition">
+                            Selesaikan Misi <i class="fa-solid fa-check ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function sortItem(type, el) {
+            if (el.classList.contains('opacity-40')) return;
+            if (type === 'layak') {
+                el.classList.add('opacity-40', 'pointer-events-none', 'border-brand-mint');
+                state.m2SortedCount++;
+                document.getElementById('m2-count').innerText = state.m2SortedCount;
+                playSound('coin');
+                document.getElementById('m2-bar').style.width = `${(state.m2SortedCount / 3) * 100}%`;
+
+                if (state.m2SortedCount >= 3) {
+                    document.getElementById('m2-status').innerText = "Sempurna! Semua barang donasi aman dan layak.";
+                    const nextBtn = document.getElementById('m2-next-btn');
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
+                    nextBtn.classList.add('bg-gradient-to-r', 'from-brand-emerald', 'to-teal-600', 'text-white', 'hover:opacity-90');
+                }
+            } else {
+                playSound('error');
+                showToast("Kurang Tepat", "fa-triangle-exclamation", "Barang rusak atau sampah tidak pantas dibagikan.");
+            }
+        }
+
+        // ==========================================
+        // MISSION 3: SEDEKAH DETECTIVE
+        // ==========================================
+        function renderMission3Screen(container) {
+            container.innerHTML = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 to-indigo-950 p-6 flex flex-col justify-between text-white">
+                    <div class="max-w-4xl mx-auto w-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-sky uppercase tracking-wider">Misi 3 dari 6 — Sekolah Pelangi</span>
+                                <h2 class="font-display text-2xl sm:text-3xl text-white">Sedekah Detective 🔎</h2>
+                            </div>
+                            <div class="bg-slate-800 px-4 py-2 rounded-2xl border border-white/10 text-brand-yellow font-display font-bold">
+                                Petunjuk Ditemukan: <span id="m3-count">${state.m3Found.filter(Boolean).length}</span>/3
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-6">
+                            Bimo mendeteksi 3 tindakan kebaikan di sekolah. Klik interaksi yang benar untuk menemukan teladan sedekah dan kepedulian!
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div id="m3-card-0" onclick="findClue(0, 'Meminjamkan pensil kepada teman yang butuh.')" class="bg-slate-800/80 hover:bg-slate-700/80 p-5 rounded-3xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                <div class="w-14 h-14 rounded-2xl bg-brand-sky/20 text-brand-sky flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition"><i class="fa-solid fa-pen-nib"></i></div>
+                                <h4 class="font-display font-bold text-white mb-1">Berbagi Alat Tulis</h4>
+                                <p class="text-xs text-slate-300">Menolong teman belajar dengan meminjamkan pensil.</p>
+                            </div>
+                            <div id="m3-card-1" onclick="findClue(1, 'Merapikan buku kelas bersama tanpa diminta.')" class="bg-slate-800/80 hover:bg-slate-700/80 p-5 rounded-3xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                <div class="w-14 h-14 rounded-2xl bg-brand-mint/20 text-brand-mint flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition"><i class="fa-solid fa-hands-holding-child"></i></div>
+                                <h4 class="font-display font-bold text-white mb-1">Gotong Royong</h4>
+                                <p class="text-xs text-slate-300">Membantu merapikan fasilitas kelas bersama.</p>
+                            </div>
+                            <div id="m3-card-2" onclick="findClue(2, 'Tersenyum ramah dan menyapa sesama.')" class="bg-slate-800/80 hover:bg-slate-700/80 p-5 rounded-3xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                <div class="w-14 h-14 rounded-2xl bg-brand-yellow/20 text-brand-yellow flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition"><i class="fa-solid fa-face-smile"></i></div>
+                                <h4 class="font-display font-bold text-white mb-1">Senyum Ramah</h4>
+                                <p class="text-xs text-slate-300">Senyuman tulus adalah sedekah termudah.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-4xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(9)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-map mr-2"></i> Kembali ke Peta
+                        </button>
+                        <button id="m3-next-btn" onclick="finishMission(2)" disabled class="px-8 py-3 bg-slate-700 text-slate-400 font-display font-bold rounded-xl cursor-not-allowed transition">
+                            Selesaikan Misi <i class="fa-solid fa-check ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function findClue(index, desc) {
+            if (state.m3Found[index]) return;
+            state.m3Found[index] = true;
+            const card = document.getElementById(`m3-card-${index}`);
+            card.classList.add('border-brand-mint', 'bg-brand-mint/10');
+            playSound('coin');
+            showToast("Petunjuk Ditemukan!", "fa-magnifying-glass", desc);
+
+            const foundCount = state.m3Found.filter(Boolean).length;
+            document.getElementById('m3-count').innerText = foundCount;
+
+            if (foundCount >= 3) {
+                const nextBtn = document.getElementById('m3-next-btn');
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
+                nextBtn.classList.add('bg-gradient-to-r', 'from-brand-emerald', 'to-teal-600', 'text-white', 'hover:opacity-90');
+            }
+        }
+
+        // ==========================================
+        // MISSION 4: ZAKAT KNOWLEDGE BRIDGE
+        // ==========================================
+        function renderMission4Screen(container) {
+            container.innerHTML = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 to-indigo-950 p-6 flex flex-col justify-between text-white">
+                    <div class="max-w-4xl mx-auto w-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-sky uppercase tracking-wider">Misi 4 dari 6 — Jembatan Pengetahuan</span>
+                                <h2 class="font-display text-2xl sm:text-3xl text-white">Zakat Knowledge Bridge 🌉</h2>
+                            </div>
+                            <div class="bg-slate-800 px-4 py-2 rounded-2xl border border-white/10 text-brand-yellow font-display font-bold">
+                                Jembatan Terbuka: <span id="m4-count">${state.m4BridgesBuilt}</span>/2
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-6">
+                            Pasangkan istilah konsep berbagi dengan definisi yang benar untuk membangun papan jembatan pengetahuan!
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-slate-800/80 p-5 rounded-3xl border border-white/10 space-y-3">
+                                <h3 class="font-display text-sm text-slate-400 uppercase tracking-wider mb-2">Pilih Istilah:</h3>
+                                <div onclick="buildBridge(0, this)" id="m4-btn-0" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex items-center justify-between transition">
+                                    <span class="font-display font-bold text-brand-sky">1. Sedekah</span>
+                                    <i class="fa-solid fa-arrow-right text-slate-500"></i>
+                                </div>
+                                <div onclick="buildBridge(1, this)" id="m4-btn-1" class="bg-slate-900 hover:bg-slate-700 p-4 rounded-2xl border border-white/10 cursor-pointer flex items-center justify-between transition">
+                                    <span class="font-display font-bold text-brand-coral">2. Zakat</span>
+                                    <i class="fa-solid fa-arrow-right text-slate-500"></i>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-800/80 p-6 rounded-3xl border border-white/10 flex flex-col justify-center">
+                                <h3 class="font-display text-sm text-slate-400 uppercase tracking-wider mb-3">Definisi Konsep:</h3>
+                                <div class="space-y-3 text-xs sm:text-sm text-slate-300">
+                                    <div class="p-3 bg-slate-900 rounded-xl border border-white/5">
+                                        ✨ Pemberian sukarela secara ikhlas untuk kebaikan tanpa batasan waktu atau jumlah.
+                                    </div>
+                                    <div class="p-3 bg-slate-900 rounded-xl border border-white/5">
+                                        ⚖️ Kewajiban mengeluarkan sebagian harta tertentu dengan syarat & ketentuan tertentu.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-4xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(9)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-map mr-2"></i> Kembali ke Peta
+                        </button>
+                        <button id="m4-next-btn" onclick="finishMission(3)" disabled class="px-8 py-3 bg-slate-700 text-slate-400 font-display font-bold rounded-xl cursor-not-allowed transition">
+                            Selesaikan Misi <i class="fa-solid fa-check ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        let m4SolvedCount = 0;
+        function buildBridge(index, el) {
+            if (el.classList.contains('opacity-40')) return;
+            el.classList.add('opacity-40', 'pointer-events-none', 'border-brand-mint');
+            m4SolvedCount++;
+            state.m4BridgesBuilt = m4SolvedCount;
+            document.getElementById('m4-count').innerText = m4SolvedCount;
+            playSound('coin');
+            showToast("Konsep Cocok!", "fa-bridge", "Papan jembatan berhasil terpasang!");
+
+            if (m4SolvedCount >= 2) {
+                const nextBtn = document.getElementById('m4-next-btn');
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
+                nextBtn.classList.add('bg-gradient-to-r', 'from-brand-emerald', 'to-teal-600', 'text-white', 'hover:opacity-90');
+            }
+        }
+
+        // ==========================================
+        // MISSION 5: EIGHT ASNAF ADVENTURE
+        // ==========================================
+        function renderMission5Screen(container) {
+            const asnafList = [
+                { name: "Fakir", desc: "Orang yang hampir tidak memiliki harta untuk memenuhi kebutuhan pokok." },
+                { name: "Miskin", desc: "Orang yang memiliki harta tetapi tidak cukup untuk kebutuhan dasar." },
+                { name: "Amil", desc: "Petugas yang mengumpulkan dan mengelola zakat." },
+                { name: "Mualaf", desc: "Orang yang baru masuk Islam dan perlu dikuatkan hatinya." },
+                { name: "Riqab", desc: "Hamba sahaya yang ingin memerdekakan diri." },
+                { name: "Gharim", desc: "Orang yang berhutang untuk kebaikan dan kesulitan melunasinya." },
+                { name: "Fisabilillah", desc: "Orang yang berjuang di jalan Allah (pendidikan, dakwah, kebaikan)." },
+                { name: "Ibnu Sabil", desc: "Musafir yang kehabisan bekalan dalam perjalanan baik." }
+            ];
+
+            let html = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 to-indigo-950 p-6 flex flex-col justify-between text-white overflow-y-auto">
+                    <div class="max-w-5xl mx-auto w-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-sky uppercase tracking-wider">Misi 5 dari 6 — Kepulauan Asnaf</span>
+                                <h2 class="font-display text-2xl sm:text-3xl text-white">Eight Asnaf Adventure 🧭</h2>
+                            </div>
+                            <div class="bg-slate-800 px-4 py-2 rounded-2xl border border-white/10 text-brand-yellow font-display font-bold">
+                                Pulau Terbuka: <span id="m5-count">${state.m5Unlocked.filter(Boolean).length}</span>/8
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-6">
+                            Klik ke-8 pulau asnaf di bawah ini untuk membuka kartu pengetahuan penerima zakat sesuai materi PAI!
+                        </p>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            `;
+
+            asnafList.forEach((item, idx) => {
+                const unlocked = state.m5Unlocked[idx];
+                html += `
+                    <div onclick="openAsnafCard(${idx}, '${item.name}', '${item.desc}')" class="bg-slate-800/90 hover:bg-slate-700 p-4 rounded-2xl border ${unlocked ? 'border-brand-mint bg-brand-mint/10' : 'border-white/10'} cursor-pointer flex flex-col items-center text-center transition group">
+                        <div class="w-10 h-10 rounded-xl ${unlocked ? 'bg-brand-mint text-slate-900' : 'bg-slate-900 text-brand-sky'} flex items-center justify-center font-display font-bold mb-2 shadow">
+                            ${idx + 1}
+                        </div>
+                        <h4 class="font-display font-bold text-sm text-white mb-1">${item.name}</h4>
+                        <span class="text-[10px] ${unlocked ? 'text-brand-mint font-semibold' : 'text-slate-400'}">${unlocked ? 'Terbuka ✓' : 'Klik Buka'}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
+
+                    <div class="max-w-5xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(9)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-map mr-2"></i> Kembali ke Peta
+                        </button>
+                        <button id="m5-next-btn" onclick="finishMission(4)" ${state.m5Unlocked.filter(Boolean).length < 8 ? 'disabled' : ''} class="px-8 py-3 ${state.m5Unlocked.filter(Boolean).length < 8 ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-brand-emerald to-teal-600 text-white hover:opacity-90'} font-display font-bold rounded-xl transition">
+                            Selesaikan Misi <i class="fa-solid fa-check ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function openAsnafCard(idx, name, desc) {
+            if (!state.m5Unlocked[idx]) {
+                state.m5Unlocked[idx] = true;
+                playSound('coin');
+                showToast(`Pulau ${name} Terbuka!`, "fa-compass", desc);
+                renderMission5Screen(document.getElementById('screen-viewport'));
+            } else {
+                showToast(`Pulau ${name}`, "fa-info-circle", desc);
+            }
+        }
+
+        // ==========================================
+        // MISSION 6: COMMUNITY BUILDER
+        // ==========================================
+        function renderMission6Screen(container) {
+            container.innerHTML = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 to-indigo-950 p-6 flex flex-col justify-between text-white">
+                    <div class="max-w-4xl mx-auto w-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-sky uppercase tracking-wider">Misi 6 dari 6 — Balai Komunitas</span>
+                                <h2 class="font-display text-2xl sm:text-3xl text-white">Community Builder 🌈</h2>
+                            </div>
+                            <div class="bg-slate-800 px-4 py-2 rounded-2xl border border-white/10 text-brand-yellow font-display font-bold">
+                                Aksi Komunitas: <span id="m6-count">${state.m6Steps}</span>/3
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-6">
+                            Susun rencana aksi kebaikan untuk menghidupkan kembali Balai Komunitas Kota Pelangi! Pilih 3 langkah bijak di bawah ini.
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                            <div id="m6-btn-0" onclick="builderStep(0, 'Kenali kebutuhan warga dengan sopan')" class="bg-slate-800/80 hover:bg-slate-700 p-5 rounded-3xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                <i class="fa-solid fa-clipboard-list text-3xl text-brand-sky mb-2 group-hover:scale-110 transition"></i>
+                                <h4 class="font-display font-bold text-white text-sm">1. Kenali Kebutuhan</h4>
+                                <p class="text-xs text-slate-300 mt-1">Cari tahu bantuan yang tepat secara santun.</p>
+                            </div>
+                            <div id="m6-btn-1" onclick="builderStep(1, 'Rencanakan aksi berbagi bersama tim')" class="bg-slate-800/80 hover:bg-slate-700 p-5 rounded-3xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                <i class="fa-solid fa-users text-3xl text-brand-mint mb-2 group-hover:scale-110 transition"></i>
+                                <h4 class="font-display font-bold text-white text-sm">2. Rencanakan Bersama</h4>
+                                <p class="text-xs text-slate-300 mt-1">Kolaborasi kelompok dengan gembira.</p>
+                            </div>
+                            <div id="m6-btn-2" onclick="builderStep(2, 'Laksanakan kegiatan dengan menjaga martabat')" class="bg-slate-800/80 hover:bg-slate-700 p-5 rounded-3xl border border-white/10 cursor-pointer flex flex-col items-center text-center transition group">
+                                <i class="fa-solid fa-hands-holding-heart text-3xl text-pink-400 mb-2 group-hover:scale-110 transition"></i>
+                                <h4 class="font-display font-bold text-white text-sm">3. Jaga Kerahasiaan</h4>
+                                <p class="text-xs text-slate-300 mt-1">Santun, menjaga privasi dan tanpa pamer.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-4xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(9)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-map mr-2"></i> Kembali ke Peta
+                        </button>
+                        <button id="m6-next-btn" onclick="finishMission(5)" disabled class="px-8 py-3 bg-slate-700 text-slate-400 font-display font-bold rounded-xl cursor-not-allowed transition">
+                            Selesaikan Misi Terakhir <i class="fa-solid fa-trophy ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        let m6Completed = [false, false, false];
+        function builderStep(idx, desc) {
+            if (m6Completed[idx]) return;
+            m6Completed[idx] = true;
+            state.m6Steps++;
+            document.getElementById('m6-count').innerText = state.m6Steps;
+            const btn = document.getElementById(`m6-btn-${idx}`);
+            btn.classList.add('border-brand-mint', 'bg-brand-mint/10');
+            playSound('coin');
+            showToast("Aksi Berhasil!", "fa-rainbow", desc);
+
+            if (state.m6Steps >= 3) {
+                const nextBtn = document.getElementById('m6-next-btn');
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
+                nextBtn.classList.add('bg-gradient-to-r', 'from-brand-emerald', 'to-teal-600', 'text-white', 'hover:opacity-90');
+            }
+        }
+
+        // ==========================================
+        // SCREEN 9: COMMUNITY MAP (PROGRES PETA)
+        // ==========================================
+        function renderMapScreen(container) {
+            const missions = [
+                { name: "Perpustakaan Kota", desc: "Misi 1: Rescue the Books", screen: 3 },
+                { name: "Gudang Donasi", desc: "Misi 2: Donation Sorter", screen: 4 },
+                { name: "Sekolah Pelangi", desc: "Misi 3: Sedekah Detective", screen: 5 },
+                { name: "Jembatan Ilmu", desc: "Misi 4: Zakat Knowledge Bridge", screen: 6 },
+                { name: "Kepulauan Asnaf", desc: "Misi 5: Eight Asnaf Adventure", screen: 7 },
+                { name: "Balai Komunitas", desc: "Misi 6: Community Builder", screen: 8 }
+            ];
+
+            let allFinished = state.completedMissions.every(Boolean);
+
+            let html = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 p-6 sm:p-8 flex flex-col justify-between text-white overflow-y-auto">
+                    <div class="max-w-5xl mx-auto w-full">
+                        <div class="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+                            <div>
+                                <span class="bg-brand-turquoise/20 text-brand-sky px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-brand-turquoise/30">Peta Kota Pelangi</span>
+                                <h2 class="font-display text-3xl text-white mt-2">Pilih Lokasi Misi Kebaikan</h2>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button onclick="switchScreen(10)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-brand-yellow font-display rounded-xl text-sm border border-brand-yellow/30 flex items-center gap-2">
+                                    <i class="fa-solid fa-book-open-reader"></i> Kunci Jawaban
+                                </button>
+                                ${allFinished ? `
+                                    <button onclick="switchScreen(11)" class="px-5 py-2 bg-gradient-to-r from-brand-coral to-amber-500 hover:opacity-90 text-white font-display font-bold rounded-xl text-sm shadow-lg animate-pulse flex items-center gap-2">
+                                        <i class="fa-solid fa-trophy"></i> Ambil Reward Hero!
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
+            `;
+
+            missions.forEach((m, idx) => {
+                const finished = state.completedMissions[idx];
+                html += `
+                    <div onclick="switchScreen(${m.screen})" class="bg-slate-800/90 hover:bg-slate-700/90 p-5 rounded-3xl border ${finished ? 'border-brand-mint bg-brand-mint/10' : 'border-white/10'} cursor-pointer flex flex-col justify-between transition group shadow-xl">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="w-10 h-10 rounded-xl ${finished ? 'bg-brand-mint text-slate-900' : 'bg-slate-900 text-brand-sky'} flex items-center justify-center font-display font-bold shadow">
+                                    ${idx + 1}
+                                </span>
+                                <span class="text-xs px-2.5 py-1 rounded-full ${finished ? 'bg-brand-mint/20 text-brand-mint' : 'bg-slate-900 text-slate-400'} font-semibold">
+                                    ${finished ? 'Selesai ✓' : 'Tersedia'}
+                                </span>
+                            </div>
+                            <h3 class="font-display font-bold text-lg text-white mb-1 group-hover:text-brand-sky transition">${m.name}</h3>
+                            <p class="text-xs text-slate-300">${m.desc}</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-brand-sky font-semibold">
+                            <span>Jelajahi Lokasi</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
+
+                    <div class="max-w-5xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(0)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-arrow-left mr-2"></i> Beranda Utama
+                        </button>
+                        <div class="text-xs text-slate-400 italic">
+                            Selesaikan keenam misi untuk membuka gelar SHARE & CARE HERO!
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        // ==========================================
+        // SCREEN 10: FEEDBACK & ANSWER GUIDE
+        // ==========================================
+        function renderFeedbackScreen(container) {
+            container.innerHTML = `
+                <div class="flex-1 bg-gradient-to-br from-slate-900 to-indigo-950 p-6 sm:p-10 flex flex-col justify-between text-white overflow-y-auto">
+                    <div class="max-w-4xl mx-auto w-full">
+                        <div class="text-center mb-6">
+                            <span class="bg-brand-turquoise/20 text-brand-sky px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-brand-turquoise/30">Refleksi Pembelajaran PAI</span>
+                            <h2 class="font-display text-3xl sm:text-4xl text-white mt-2">Kunci Jawaban & Panduan Misi</h2>
+                            <p class="text-sm text-slate-300">Rangkuman nilai dan konsep berbagi yang telah kamu pelajari.</p>
+                        </div>
+
+                        <div class="space-y-4 mb-6 text-sm">
+                            <div class="bg-slate-800/80 p-5 rounded-3xl border border-white/10">
+                                <strong class="text-brand-yellow block mb-1"><i class="fa-solid fa-book mr-2"></i>Misi 1 & 2: Kepedulian Fasilitas & Donasi Layak</strong>
+                                Memberikan bantuan tidak harus selalu berupa uang. Meminjamkan buku, alat tulis, dan menyortir barang bersih serta layak pakai adalah bentuk sedekah nyata.
+                            </div>
+                            <div class="bg-slate-800/80 p-5 rounded-3xl border border-white/10">
+                                <strong class="text-brand-sky block mb-1"><i class="fa-solid fa-magnifying-glass mr-2"></i>Misi 3: Sedekah Melalui Perilaku Sehari-hari</strong>
+                                Senyuman, pertolongan kecil di kelas, dan menjaga kebersihan lingkungan adalah sedekah sukarela yang mulia.
+                            </div>
+                            <div class="bg-slate-800/80 p-5 rounded-3xl border border-white/10">
+                                <strong class="text-brand-mint block mb-1"><i class="fa-solid fa-scale-balanced mr-2"></i>Misi 4 & 5: Perbedaan Sedekah & Zakat (8 Asnaf)</strong>
+                                Sedekah bersifat sukarela, sedangkan zakat adalah kewajiban harta dengan syarat tertentu bagi muzakki untuk diberikan kepada 8 asnaf (fakir, miskin, amil, mualaf, riqab, gharim, fisabilillah, ibnu sabil).
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-4xl mx-auto w-full flex justify-between items-center pt-2">
+                        <button onclick="switchScreen(9)" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-map mr-2"></i> Kembali ke Peta
+                        </button>
+                        <button onclick="switchScreen(11)" class="px-8 py-3 bg-gradient-to-r from-brand-coral to-amber-500 hover:opacity-90 text-white font-display font-bold rounded-xl shadow-lg transition">
+                            Lanjut ke Reward Hero <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // SCREEN 11: REWARD — SHARE & CARE HERO
+        // ==========================================
+        function renderRewardScreen(container) {
+            container.innerHTML = `
+                <div class="flex-1 bg-gradient-to-br from-indigo-950 via-purple-900 to-sky-950 p-6 sm:p-10 flex flex-col justify-between text-white overflow-y-auto">
+                    <div class="max-w-3xl mx-auto w-full text-center">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-brand-yellow/20 border-2 border-brand-yellow text-brand-yellow text-4xl mb-4 animate-float shadow-2xl">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h1 class="font-display text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-sky via-brand-yellow to-pink-400 mb-2">
+                            SELAMAT, POHON KEBAIKAN HIDUP KEMBALI!
+                        </h1>
+                        <p class="text-base sm:text-lg text-brand-cream/90 mb-6">Kamu telah berhasil menyelesaikan seluruh misi dan menjadi Share & Care Hero sejati.</p>
+
+                        <!-- Certificate Card -->
+                        <div class="bg-slate-900/90 border-4 border-brand-yellow/60 rounded-3xl p-6 sm:p-8 shadow-2xl relative mb-6 text-center">
+                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-yellow text-slate-950 font-display font-bold px-6 py-1 rounded-full text-xs uppercase tracking-widest shadow">
+                                Sertifikat Kelulusan Misi PAI
+                            </div>
+                            <h3 class="font-display text-2xl text-brand-sky mb-2 mt-2">SHARE & CARE HERO</h3>
+                            <p class="text-xs text-slate-300 mb-4">Diberikan dengan bangga kepada:</p>
+                            <div class="inline-block border-b-2 border-dashed border-brand-yellow px-8 py-2 mb-4">
+                                <input type="text" id="cert-name" value="${state.playerName}" class="bg-transparent text-center font-display font-bold text-xl text-brand-yellow focus:outline-none w-64" placeholder="Ketik Namamu">
+                            </div>
+                            <p class="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed mb-4">
+                                Atas semangat luar biasa dalam mempelajari sedekah, zakat, kepedulian sosial, dan menyelesaikan seluruh tantangan di Kota Pelangi.
+                            </p>
+                            <div class="flex justify-center gap-4 text-xs font-semibold text-brand-mint">
+                                <span>⭐ ${state.stars} Bintang Misi</span>
+                                <span>💛 ${state.coins} Heart Coins</span>
+                                <span>🏅 Badge Penjelajah Asnaf</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-3xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-4 pt-2">
+                        <button onclick="switchScreen(9)" class="w-full sm:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-display rounded-xl transition">
+                            <i class="fa-solid fa-map mr-2"></i> Kembali ke Peta
+                        </button>
+                        <div class="flex gap-3 w-full sm:w-auto">
+                            <button onclick="window.print()" class="flex-1 sm:flex-none px-6 py-3 bg-brand-sky hover:bg-brand-turquoise text-slate-950 font-display font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-print"></i> Cetak Sertifikat
+                            </button>
+                            <button onclick="restartGame()" class="flex-1 sm:flex-none px-6 py-3 bg-slate-800 hover:bg-slate-700 text-brand-coral font-display font-bold rounded-xl border border-brand-coral/30 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-rotate-right"></i> Main Lagi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function restartGame() {
+            state.currentScreen = 0;
+            state.coins = 100;
+            state.stars = 0;
+            state.completedMissions = [false, false, false, false, false, false];
+            state.m1BooksPlaced = 0;
+            state.m2SortedCount = 0;
+            state.m3Found = [false, false, false];
+            state.m4BridgesBuilt = 0;
+            state.m5Unlocked = [false, false, false, false, false, false, false, false];
+            state.m6Steps = 0;
+            updateHUD();
+            switchScreen(0);
+            showToast("Game Dimulai Ulang", "fa-rotate", "Semoga petualangan barunya menyenangkan!");
+        }
+
+        // Initialize on window load
+        window.onload = function() {
+            updateHUD();
+            switchScreen(0);
+        };
+    </script>
+</body>
+</html>
